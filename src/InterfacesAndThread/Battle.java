@@ -1,10 +1,9 @@
 package InterfacesAndThread;
 
-import Characters.Hero;
 import Characters.RPGCharacter;
-import Things.Potion.PotionBig;
-import Things.Potion.PotionMedium;
-import Things.Potion.PotionSmall;
+import Things.Potions.PotionBig;
+import Things.Potions.PotionMedium;
+import Things.Potions.PotionSmall;
 
 import java.io.Serializable;
 
@@ -23,7 +22,7 @@ public record Battle(RPGCharacter warrior1, RPGCharacter warrior2) implements Ru
                 + battered.getName() + " (" + battered.getCurrentHealth() + " hp) "
                 + kickPower + " повреждений");
         battered.changeCurrentHealth(-kickPower);
-        if (battered instanceof Hero && battered.getCurrentHealth() > 0) {
+        if (battered instanceof HaveBackpack && battered.getCurrentHealth() > 0) {
             damage = battered.getMaxHealth() - battered.getCurrentHealth();
             if (damage >= 20)
                 damage = ((HaveBackpack) battered).drinkPotion(new PotionBig());

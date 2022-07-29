@@ -1,21 +1,23 @@
 package Menu;
 
-import Characters.Hero;
-import Characters.NPC.NonPlayerCharacter;
+import Characters.Humans.Hero;
+import Characters.Moncters.Goblin;
+import Characters.Moncters.Monster;
+import Characters.Moncters.Skeleton;
 import InterfacesAndThread.RPGAction;
 import InterfacesAndThread.Utils;
 
 public class MenuDarkForest extends RPGMenu implements RPGAction {
 
-    private final NonPlayerCharacter monster;
+    private Monster monster;
     private final Hero hero;
-    private boolean isGameOver = false;
+    private boolean gameOver;
 
 
-    public MenuDarkForest(Hero hero, NonPlayerCharacter monster, int indentLevel) {
+    public MenuDarkForest(Hero hero, int indentLevel) {
         super(indentLevel);
         this.hero = hero;
-        this.monster = monster;
+        this.monster = generateMonster();
         menuItems.add(new StringBuilder("Вы находитесь в Тёмном лесу и встретили монстра " + monster.getName() + ". Что вы хотите сделать?"));
         menuItems.add(new StringBuilder("1. Посмотреть информацию о монстре"));
         menuItems.add(new StringBuilder("2. Начать битву с монстром"));
@@ -27,12 +29,18 @@ public class MenuDarkForest extends RPGMenu implements RPGAction {
     @Override
     public void printMenu() {
         isExitFromMenu = false;
-        while (!isExitFromMenu) {
+        gameOver = false;
+        while (!isExitFromMenu && !gameOver) {
             switch (Utils.getMenuItem(text, countOfMenuItems)) {
                 case 1 -> System.out.println(monster);
                 case 2 -> {
-                    isGameOver = startBattle(hero, monster);
-                    isExitFromMenu = true;
+                    gameOver = startBattle(hero, monster);
+                    if (!gameOver) {
+                        MenuOfContinue menuOfContinue = new MenuOfContinue(indentLevel + 1, "Темном лесу");
+                        menuOfContinue.printMenu();
+                        if (!(isExitFromMenu = menuOfContinue.isLeaveLocation()))
+                            refreshMonster(monster.getName());
+                    }
                 }
                 case 0 -> {
                     hero.eraseBackpack();
@@ -42,7 +50,20 @@ public class MenuDarkForest extends RPGMenu implements RPGAction {
         }
     }
 
-    public boolean gameOver(){
-        return isGameOver;
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    private Monster generateMonster() {
+        if (Math.random() > 0.5)
+            return new Goblin(hero.getLevel());
+        else
+            return new Skeleton(hero.getLevel());
+    }
+
+    private void refreshMonster(String nameOfTheoOldMonster) {
+        monster = generateMonster();
+        int start = text.indexOf(nameOfTheoOldMonster);
+        text.replace(start, start + nameOfTheoOldMonster.length(), monster.getName());
     }
 }

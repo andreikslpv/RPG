@@ -1,6 +1,6 @@
 package Menu;
 
-import Characters.RPGCharacter;
+import Characters.Humans.Human;
 import InterfacesAndThread.HaveBackpack;
 import InterfacesAndThread.Utils;
 import Things.Thing;
@@ -9,10 +9,10 @@ public class MenuOfChoosingThing extends RPGMenu {
     private Thing choosingThing = null;
     private final Thing[] products;
 
-    public MenuOfChoosingThing(RPGCharacter character, int indentLevel) {
+    public MenuOfChoosingThing(HaveBackpack character, int indentLevel, String purpose) {
         super(indentLevel);
-        menuItems.add(new StringBuilder("Список вещей " + character.getName() + ". Выберите вещь:"));
-        products = ((HaveBackpack) character).showBackpack(menuItems);
+        menuItems.add(new StringBuilder("Список вещей " + ((Human) character).getName() + ". Выберите вещь для " + purpose));
+        products = character.showBackpack(menuItems);
         menuItems.add(new StringBuilder("0. Выход"));
         text = Utils.formatTheMenuText(indentLevel, menuItems);
         if (products != null)

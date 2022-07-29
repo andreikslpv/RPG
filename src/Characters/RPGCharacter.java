@@ -1,21 +1,19 @@
 package Characters;
 
 import InterfacesAndThread.Utils;
-import Things.Thing;
+import Things.Weapons.Weapon;
+
 import java.io.Serializable;
-import java.util.Map;
 
 abstract public class RPGCharacter implements Serializable, Utils {
     protected String name;
     protected int maxHealth;
     protected int currentHealth;
     protected int power;
-    protected int powerBonus;
     protected int dexterity;
-    protected int dexterityFine;
     protected int level;
     protected int gold;
-    protected Map<Thing, Integer> backpack;
+    protected Weapon weapon;
 
     abstract public void setLevel(int newLevel);
 
@@ -32,11 +30,10 @@ abstract public class RPGCharacter implements Serializable, Utils {
     }
 
     public int getPower() {
-        return power + powerBonus;
-    }
-
-    public int getDexterity() {
-        return dexterity;
+        if (weapon != null)
+            return power + weapon.getPowerEffect();
+        else
+            return power;
     }
 
     public int getLevel() {
@@ -48,7 +45,10 @@ abstract public class RPGCharacter implements Serializable, Utils {
     }
 
     public double getChance() {
-        return (dexterity + dexterityFine) / 200d + Math.random();
+        if (weapon != null)
+            return (dexterity + weapon.getDexterityEffect()) / 200d + Math.random();
+        else
+            return dexterity;
     }
 
     public void changeCurrentHealth(int change) {
@@ -67,17 +67,30 @@ abstract public class RPGCharacter implements Serializable, Utils {
             return false;
     }
 
-    public Map<Thing, Integer> getBackpack() {
-        return backpack;
+    public void takeTheSword(Weapon weapon) {
+        if (weapon != null) {
+            this.weapon = weapon;
+            System.out.println(Utils.INDENT_3_LEVEL + name + " взял в руки оружие " + this.weapon.getName());
+        }
     }
 
-    public void enableSwordEffect (int powerBonus, int dexterityFine) {
-        this.powerBonus = powerBonus;
-        this.dexterityFine = dexterityFine;
+    public void removeTheSword(Weapon weapon) {
+        if (this.weapon == weapon) {
+            System.out.println(Utils.INDENT_3_LEVEL + name + " убрал оружие " + this.weapon.getName());
+            this.weapon = null;
+        }
     }
 
-    public boolean isSwordTaken() {
-        return powerBonus != 0 && dexterityFine != 0;
+    public boolean isWeaponTaken(Weapon weapon) {
+        return this.weapon == weapon;
+    }
+
+    public boolean isWeaponTaken() {
+        return this.weapon != null;
+    }
+
+    public Weapon getWeapon() {
+        return this.weapon;
     }
 
     public StringBuilder getSummaryLine1() {
@@ -85,8 +98,12 @@ abstract public class RPGCharacter implements Serializable, Utils {
     }
 
     public StringBuilder getSummaryLine2() {
-        return new StringBuilder("\n" + INDENT_2_LEVEL + "Здоровье: " + currentHealth + "/" + maxHealth + ", сила: " + power + ", ловкость: " + dexterity
+        StringBuilder sb = new StringBuilder("\n" + INDENT_2_LEVEL + "Здоровье: " + currentHealth + "/" + maxHealth + ", сила: " + power + ", ловкость: " + dexterity
                 + "\n" + INDENT_2_LEVEL + "Золото: " + gold);
+        if (weapon != null)
+            return sb.append("\nОружие в руках: ").append(weapon.getName());
+        else
+            return sb;
     }
 
     @Override

@@ -1,11 +1,15 @@
 package Menu;
 
-import Characters.Hero;
-import Characters.NPC.*;
+import Characters.Humans.Alchemist;
+import Characters.Humans.Hero;
+import Characters.Humans.Smith;
+import Characters.Humans.Trader;
+import Characters.Moncters.Monster;
+import Characters.Moncters.*;
 import InterfacesAndThread.Utils;
-import Things.Potion.Potion;
-import Things.Weapon.Weapon;
+import Things.Potions.Potion;
 import Things.Thing;
+import Things.Weapons.Weapon;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,11 +25,11 @@ public class MenuTown extends RPGMenu {
 
     public MenuTown(String nameOfTheHero, int indentLevel) {
         super(indentLevel);
-        hero = new Hero(nameOfTheHero);
+        hero = new Hero(nameOfTheHero, 1);
         globalLevel = hero.getLevel();
         traders = new ArrayList<>();
-        traders.add(new Alchemist(globalLevel));
-        traders.add(new Smith(globalLevel));
+        traders.add(new Alchemist("ALCHEMIST", globalLevel));
+        traders.add(new Smith("SMITH", globalLevel));
         menuItems.add(new StringBuilder("Вы находитесь в Городе. Что вы хотите сделать?"));
         menuItems.add(new StringBuilder("1. Посмотреть информацию о герое " + hero.getName()));
         menuItems.add(new StringBuilder("2. Посмотреть вещи героя"));
@@ -51,20 +55,21 @@ public class MenuTown extends RPGMenu {
             switch (enter = Utils.getMenuItem(text, countOfMenuItems)) {
                 case 1 -> System.out.println(hero);
                 case 2 -> {
-                    MenuOfChoosingThing menu = new MenuOfChoosingThing(hero, indentLevel + 1);
+                    MenuOfChoosingThing menu = new MenuOfChoosingThing(hero, indentLevel + 1, "использования:");
                     menu.printMenu();
                     Thing thing = menu.getChoosingThing();
                     if (thing instanceof Potion)
                         hero.drinkPotion((Potion) thing);
-                    if (thing instanceof Weapon && hero.isSwordTaken())
-                        hero.removeTheSword((Weapon) thing);
-                    if (thing instanceof Weapon && !hero.isSwordTaken())
-                        hero.takeTheSword((Weapon) thing);
+                    if (thing instanceof Weapon)
+                        if (hero.isWeaponTaken((Weapon) thing))
+                            hero.removeTheSword((Weapon) thing);
+                        else
+                            hero.takeTheSword((Weapon) thing);
                 }
                 case 3 -> {
-                    MenuDarkForest menuDarkForest = new MenuDarkForest(hero, generateMonster(), indentLevel + 1);
+                    MenuDarkForest menuDarkForest = new MenuDarkForest(hero, indentLevel + 1);
                     menuDarkForest.printMenu();
-                    if (menuDarkForest.gameOver())
+                    if (menuDarkForest.isGameOver())
                         isExitFromMenu = true;
                     else
                         levelUp();
@@ -90,13 +95,6 @@ public class MenuTown extends RPGMenu {
                 }
             }
         }
-    }
-
-    private NonPlayerCharacter generateMonster() {
-        if (Math.random() > 0.5)
-            return new Goblin(globalLevel);
-        else
-            return new Skeleton(globalLevel);
     }
 
     private void saveGameToTheFile() {

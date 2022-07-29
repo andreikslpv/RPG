@@ -1,8 +1,9 @@
 package InterfacesAndThread;
 
+import Characters.Humans.Human;
 import Characters.RPGCharacter;
-import Things.Potion.Potion;
-import Things.Weapon.Weapon;
+import Things.Potions.Potion;
+import Things.Weapons.Weapon;
 import Things.Thing;
 
 import java.util.Iterator;
@@ -24,18 +25,8 @@ public interface HaveBackpack {
         return ((RPGCharacter) this).getMaxHealth() - ((RPGCharacter) this).getCurrentHealth();
     }
 
-    default void takeTheSword(Weapon weapon) {
-        ((RPGCharacter) this).enableSwordEffect(weapon.getPowerEffect(), weapon.getDexterityEffect());
-        System.out.println(Utils.INDENT_3_LEVEL + ((RPGCharacter) this).getName() + " одел меч " + weapon.getName());
-    }
-
-    default void removeTheSword(Weapon weapon) {
-        ((RPGCharacter) this).enableSwordEffect(0, 0);
-        System.out.println(Utils.INDENT_3_LEVEL + ((RPGCharacter) this).getName() + " снял меч " + weapon.getName());
-    }
-
     default void putItInBackpack(Thing thing, int count) {
-        Map<Thing, Integer> backpack = ((RPGCharacter) this).getBackpack();
+        Map<Thing, Integer> backpack = ((Human) this).getBackpack();
         if (backpack.containsKey(thing)) {
             for (Thing currentThing : backpack.keySet()) {
                 if (currentThing.equals(thing)) {
@@ -49,7 +40,7 @@ public interface HaveBackpack {
     }
 
     default boolean removeItFromBackpack(Thing thing, int count) {
-        Map<Thing, Integer> backpack = ((RPGCharacter) this).getBackpack();
+        Map<Thing, Integer> backpack = ((Human) this).getBackpack();
         if (backpack.containsKey(thing)) {
             Iterator<Thing> iterator = backpack.keySet().iterator();
             Thing currentThing;
@@ -63,7 +54,7 @@ public interface HaveBackpack {
                     }
                     if (temp == count) {
                         if (iterator instanceof Weapon)
-                            removeTheSword((Weapon) iterator);
+                            ((RPGCharacter) this).removeTheSword((Weapon) iterator);
                         iterator.remove();
                         return true;
                     }
@@ -74,11 +65,11 @@ public interface HaveBackpack {
     }
 
     default boolean containsThing(Thing thing) {
-        return ((RPGCharacter) this).getBackpack().containsKey(thing);
+        return ((Human) this).getBackpack().containsKey(thing);
     }
 
     default int getCountOfThing(Thing thing) {
-        Integer i = ((RPGCharacter) this).getBackpack().get(thing);
+        Integer i = ((Human) this).getBackpack().get(thing);
         if (i != null)
             return i;
         else
@@ -86,11 +77,11 @@ public interface HaveBackpack {
     }
 
     default void eraseBackpack() {
-        ((RPGCharacter) this).getBackpack().clear();
+        ((Human) this).getBackpack().clear();
     }
 
     default Thing[] showBackpack(List<StringBuilder> menuItems) {
-        Map<Thing, Integer> backpack = ((RPGCharacter) this).getBackpack();
+        Map<Thing, Integer> backpack = ((Human) this).getBackpack();
         Thing[] products = null;
         if (backpack.isEmpty()) {
             menuItems.add(new StringBuilder("У " + ((RPGCharacter) this).getName() + " ничего нет"));
