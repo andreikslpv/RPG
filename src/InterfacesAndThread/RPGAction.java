@@ -2,9 +2,8 @@ package InterfacesAndThread;
 
 import Characters.Humans.Hero;
 import Characters.Humans.Human;
-import Characters.Humans.Trader;
 import Characters.RPGCharacter;
-import Things.Thing;
+import Things.RPGThing;
 
 public interface RPGAction {
 
@@ -17,24 +16,9 @@ public interface RPGAction {
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
         }
-        // в случае победы герой получает ...
+        // в случае победы герой получает выйгрыш
         if (nasty.getCurrentHealth() <= 0) {
-            System.out.println(Utils.INDENT_3_LEVEL + hero.getName() + " победил!");
-            // ... золото побежденного
-            hero.changeGold(nasty.getGold());
-            // ... опыт в размере максимального здоровья побежденного
-            hero.changeExperience(nasty.getMaxHealth());
-            // ... вещи из рюкзака побежденного
-            if (nasty instanceof HaveBackpack) {
-                for (Thing currentThing : ((Human) nasty).getBackpack().keySet()) {
-                    hero.putItInBackpack(currentThing, ((Human) nasty).getCountOfThing(currentThing));
-                }
-                ((Human) nasty).eraseBackpack();
-            }
-            // ... оружие побежденного которое было у него в руках
-            if (nasty.isWeaponTaken()) {
-                hero.putItInBackpack(nasty.getWeapon(), 1);
-            }
+            hero.takeWin(nasty);
         }
         if (hero.getCurrentHealth() <= 0) {
             System.out.println(Utils.INDENT_3_LEVEL + nasty.getName() + " победил Вашего героя. Игра окончена!");
@@ -43,28 +27,28 @@ public interface RPGAction {
         return false;
     }
 
-    default void startTrade(HaveBackpack trader, HaveBackpack buyer, Thing thing, int countForSales) {
+    default void startTrade(Human trader, Human buyer, RPGThing thing, int countForSales) {
         if (thing != null && trader.containsThing(thing) && countForSales != 0) {
             int sum = countForSales * thing.getPrice();
-            if (((Human) buyer).changeGold(-sum)) {
+            if (buyer.changeGold(-sum)) {
                 trader.removeItFromBackpack(thing, countForSales);
-                ((Human) trader).changeGold(sum);
+                trader.changeGold(sum);
                 buyer.putItInBackpack(thing, countForSales);
                 if (buyer instanceof Hero)
                     ((Hero) buyer).changeExperience(sum / 10);
-                System.out.println(Utils.INDENT_3_LEVEL + ((Human) buyer).getName() + " успешно купил " + thing.getName() + " (" + countForSales + " шт.)");
+                System.out.println(Utils.INDENT_3_LEVEL + buyer.getName() + " успешно купил " + thing.getName() + " (" + countForSales + " шт.)");
             } else
-                System.out.println(Utils.INDENT_3_LEVEL + "У " + ((Human) buyer).getName() +" Недостаточно средств для покупки: требуется " + sum
-                        + ", есть " + ((Human) buyer).getGold());
+                System.out.println(Utils.INDENT_3_LEVEL + "У " + buyer.getName() + " Недостаточно средств для покупки: требуется " + sum
+                        + ", есть " + buyer.getGold());
 
         }
     }
 
-    default void startTheft(Trader robbed, RPGCharacter thief, Thing thing) {
+    default void startTheft(Human robbed, Human thief, RPGThing thing) {
         if (thing != null && robbed.containsThing(thing)) {
             int count = robbed.getCountOfThing(thing);
             robbed.removeItFromBackpack(thing, count);
-            ((HaveBackpack) thief).putItInBackpack(thing, count);
+            thief.putItInBackpack(thing, count);
             if (thief instanceof Hero)
                 ((Hero) thief).changeExperience(thing.getPrice() * count / 10);
             System.out.println(Utils.INDENT_3_LEVEL + "Вы успешно украли " + thing.getName() + " (" + count + " шт.)");

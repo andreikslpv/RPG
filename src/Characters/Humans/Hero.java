@@ -1,5 +1,9 @@
 package Characters.Humans;
 
+import Characters.RPGCharacter;
+import InterfacesAndThread.Utils;
+import Things.RPGThing;
+
 public class Hero extends Human {
 
     private int experience;
@@ -32,8 +36,31 @@ public class Hero extends Human {
 
     @Override
     public String toString() {
-        return getSummaryLine1()
+        return getInfoPart1()
                 .append(", опыт: ").append(experience).append('/').append(experienceForNextLevel)
-                .append(getSummaryLine2()).toString();
+                .append(getInfoPart2()).toString();
+    }
+
+    public void takeWin(RPGCharacter nasty) {
+        StringBuilder congratulation = new StringBuilder(Utils.INDENT_3_LEVEL + name + " победил и получает:\n");
+        // Герой получает опыт в размере максимального здоровья побежденного
+        changeExperience(nasty.getMaxHealth());
+        congratulation.append(Utils.INDENT_4_LEVEL).append("+ ").append(nasty.getMaxHealth()).append(" опыта;\n");
+        // Герой получает золото побежденного
+        changeGold(nasty.getGold());
+        congratulation.append(Utils.INDENT_4_LEVEL).append("+ ").append(nasty.getGold()).append(" золота;\n");
+        if (nasty instanceof Human) {
+            // Герой получает вещи из рюкзака побежденного человека
+            for (RPGThing currentThing : ((Human) nasty).getBackpack().keySet()) {
+                putItInBackpack(currentThing, ((Human) nasty).getCountOfThing(currentThing));
+                congratulation.append(Utils.INDENT_4_LEVEL).append("+ ").append(currentThing).append(";\n");
+            }
+            ((Human) nasty).eraseBackpack();
+        } else if (nasty.isWeaponTaken()) {
+            // Герой получает оружие побежденного монстра которое было у него в руках
+            putItInBackpack(nasty.getWeapon(), 1);
+            congratulation.append(Utils.INDENT_4_LEVEL).append("+ ").append(nasty.getWeapon()).append(";\n");
+        }
+        System.out.print(congratulation);
     }
 }

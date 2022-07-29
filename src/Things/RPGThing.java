@@ -3,7 +3,7 @@ package Things;
 import java.io.Serializable;
 import java.util.Objects;
 
-abstract public class Thing implements Serializable {
+abstract public class RPGThing implements Serializable {
     protected String name;
     protected int price;
 
@@ -19,7 +19,7 @@ abstract public class Thing implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Thing thing = (Thing) o;
+        RPGThing thing = (RPGThing) o;
         return price == thing.price && name.equals(thing.name);
     }
 

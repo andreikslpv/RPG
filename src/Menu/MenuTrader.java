@@ -1,15 +1,9 @@
 package Menu;
 
-import Characters.Humans.Hero;
-import Characters.Humans.Human;
-import Characters.Humans.Alchemist;
-import Characters.Humans.Smith;
-import Characters.Humans.Trader;
-import InterfacesAndThread.HaveBackpack;
+import Characters.Humans.*;
 import InterfacesAndThread.RPGAction;
-import InterfacesAndThread.Utils;
 import Things.Potions.Potion;
-import Things.Thing;
+import Things.RPGThing;
 import Things.Weapons.Weapon;
 
 public class MenuTrader extends RPGMenu implements RPGAction {
@@ -28,7 +22,7 @@ public class MenuTrader extends RPGMenu implements RPGAction {
         menuItems.add(new StringBuilder("3. Попытаться украсть товар"));
         menuItems.add(new StringBuilder("4. Продать свои вещи торговцу"));
         menuItems.add(new StringBuilder("0. Вернуться в Город"));
-        text = Utils.formatTheMenuText(indentLevel, menuItems);
+        text = formatTheMenuText(indentLevel, menuItems);
         countOfMenuItems = 4;
     }
 
@@ -36,19 +30,21 @@ public class MenuTrader extends RPGMenu implements RPGAction {
     public void printMenu() {
         isExitFromMenu = false;
         while (!isExitFromMenu) {
-            switch (Utils.getMenuItem(text, countOfMenuItems)) {
+            switch (getMenuItem(text, countOfMenuItems)) {
                 case 1 -> System.out.println(trader);
                 case 2 -> switchBuyOrSell(trader, hero, "покупки:");
                 case 3 -> {
                     MenuOfChoosingThing menuThing = new MenuOfChoosingThing(trader, indentLevel + 1, "кражи:");
                     menuThing.printMenu();
-                    double chance = hero.getChance();
-                    if (chance > 0.8d)
-                        startTheft(trader, hero, menuThing.getChoosingThing());
-                    else {
-                        System.out.println(INDENT_3_LEVEL + "Вы попались на воровстве!");
-                        isGameOver = startBattle(hero, trader);
-                        isExitFromMenu = true;
+                    if (menuThing.getChoosingThing() != null) {
+                        double chance = hero.getChance();
+                        if (chance > 0.8d)
+                            startTheft(trader, hero, menuThing.getChoosingThing());
+                        else {
+                            System.out.println(INDENT_3_LEVEL + "Вы попались на воровстве!");
+                            isGameOver = startBattle(hero, trader);
+                            isExitFromMenu = true;
+                        }
                     }
                 }
                 case 4 -> switchBuyOrSell(hero, trader, "продажи:");
@@ -57,23 +53,24 @@ public class MenuTrader extends RPGMenu implements RPGAction {
         }
     }
 
-    public boolean gameOver(){
+    public boolean gameOver() {
         return isGameOver;
     }
 
-    private void switchBuyOrSell(HaveBackpack trader, HaveBackpack buyer, String purpose) {
+    private void switchBuyOrSell(Human trader, Human buyer, String purpose) {
         MenuOfChoosingThing menuThing = new MenuOfChoosingThing(trader, indentLevel + 1, purpose);
         menuThing.printMenu();
-        Thing choosingThing = menuThing.getChoosingThing();
-        if (doesHeBuyThisThing(buyer, choosingThing)) {
-            MenuOfChoosingCount menuCount = new MenuOfChoosingCount(trader, choosingThing, indentLevel + 1, purpose);
-            menuCount.printMenu();
-            startTrade(trader, buyer, choosingThing, menuCount.getChoosingCount());
-        } else
-            System.out.println(INDENT_3_LEVEL + ((Human) buyer).getName() + " не покупает такие вещи");
+        RPGThing choosingThing = menuThing.getChoosingThing();
+        if (choosingThing != null)
+            if (doesHeBuyThisThing(buyer, choosingThing)) {
+                MenuOfChoosingCount menuCount = new MenuOfChoosingCount(trader, choosingThing, indentLevel + 1, purpose);
+                menuCount.printMenu();
+                startTrade(trader, buyer, choosingThing, menuCount.getChoosingCount());
+            } else
+                System.out.println(INDENT_3_LEVEL + buyer.getName() + " не покупает такие вещи");
     }
 
-    private boolean doesHeBuyThisThing(HaveBackpack buyer, Thing thing) {
+    private boolean doesHeBuyThisThing(Human buyer, RPGThing thing) {
         if (buyer instanceof Hero)
             return true;
         if (buyer instanceof Alchemist && thing instanceof Potion)

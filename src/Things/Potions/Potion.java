@@ -1,8 +1,8 @@
 package Things.Potions;
 
-import Things.Thing;
+import Things.RPGThing;
 
-abstract public class Potion extends Thing {
+abstract public class Potion extends RPGThing {
     protected int effect;
 
     public int getEffect() {

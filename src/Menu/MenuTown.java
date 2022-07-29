@@ -4,11 +4,9 @@ import Characters.Humans.Alchemist;
 import Characters.Humans.Hero;
 import Characters.Humans.Smith;
 import Characters.Humans.Trader;
-import Characters.Moncters.Monster;
-import Characters.Moncters.*;
 import InterfacesAndThread.Utils;
 import Things.Potions.Potion;
-import Things.Thing;
+import Things.RPGThing;
 import Things.Weapons.Weapon;
 
 import java.io.FileOutputStream;
@@ -43,7 +41,7 @@ public class MenuTown extends RPGMenu {
         }
         menuItems.add(new StringBuilder(i + ". Сохранить игру"));
         menuItems.add(new StringBuilder("0. Завершить игру и вернуться в стартовое меню"));
-        text = Utils.formatTheMenuText(indentLevel, menuItems);
+        text = formatTheMenuText(indentLevel, menuItems);
         countOfMenuItems = i;
     }
 
@@ -52,12 +50,12 @@ public class MenuTown extends RPGMenu {
         int enter;
         isExitFromMenu = false;
         while (!isExitFromMenu) {
-            switch (enter = Utils.getMenuItem(text, countOfMenuItems)) {
+            switch (enter = getMenuItem(text, countOfMenuItems)) {
                 case 1 -> System.out.println(hero);
                 case 2 -> {
                     MenuOfChoosingThing menu = new MenuOfChoosingThing(hero, indentLevel + 1, "использования:");
                     menu.printMenu();
-                    Thing thing = menu.getChoosingThing();
+                    RPGThing thing = menu.getChoosingThing();
                     if (thing instanceof Potion)
                         hero.drinkPotion((Potion) thing);
                     if (thing instanceof Weapon)
@@ -75,24 +73,20 @@ public class MenuTown extends RPGMenu {
                         levelUp();
                 }
                 case 0 -> isExitFromMenu = true;
-                default -> {
-                    if (enter == countOfMenuItems) {
-                        saveGameToTheFile();
-                    } else {
-                        enter -= 4;
-                        if (enter >= 0 && enter < traders.size()) {
-                            if (traders.get(enter).getCurrentHealth() > 0) {
-                                MenuTrader menuTrader = new MenuTrader(hero, traders.get(enter), indentLevel + 1);
-                                menuTrader.printMenu();
-                                if (menuTrader.gameOver())
-                                    isExitFromMenu = true;
-                                else
-                                    levelUp();
-                            } else
-                                System.out.println(INDENT_2_LEVEL + "Торговец " + traders.get(enter).getName() + " мёртв");
-                        }
-                    }
-                }
+            }
+            if (enter == countOfMenuItems)
+                saveGameToTheFile();
+            enter -= 4;
+            if (enter >= 0 && enter < traders.size()) {
+                if (traders.get(enter).getCurrentHealth() > 0) {
+                    MenuTrader menuTrader = new MenuTrader(hero, traders.get(enter), indentLevel + 1);
+                    menuTrader.printMenu();
+                    if (menuTrader.gameOver())
+                        isExitFromMenu = true;
+                    else
+                        levelUp();
+                } else
+                    System.out.println(INDENT_2_LEVEL + "Торговец " + traders.get(enter).getName() + " мёртв");
             }
         }
     }

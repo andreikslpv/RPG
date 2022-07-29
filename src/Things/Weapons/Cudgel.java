@@ -1,7 +1,7 @@
 package Things.Weapons;
 
-public class WeaponCudgel extends Weapon{
-    public WeaponCudgel() {
+public class Cudgel extends Weapon{
+    public Cudgel() {
         name = "Cudgel";
         price = 100;
         powerEffect = 5;

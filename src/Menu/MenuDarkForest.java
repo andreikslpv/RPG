@@ -5,7 +5,6 @@ import Characters.Moncters.Goblin;
 import Characters.Moncters.Monster;
 import Characters.Moncters.Skeleton;
 import InterfacesAndThread.RPGAction;
-import InterfacesAndThread.Utils;
 
 public class MenuDarkForest extends RPGMenu implements RPGAction {
 
@@ -22,7 +21,7 @@ public class MenuDarkForest extends RPGMenu implements RPGAction {
         menuItems.add(new StringBuilder("1. Посмотреть информацию о монстре"));
         menuItems.add(new StringBuilder("2. Начать битву с монстром"));
         menuItems.add(new StringBuilder("0. Сбежать в Город (при этом Вы потеряете все вещи из рюкзака)"));
-        text = Utils.formatTheMenuText(indentLevel, menuItems);
+        text = formatTheMenuText(indentLevel, menuItems);
         countOfMenuItems = 2;
     }
 
@@ -31,7 +30,7 @@ public class MenuDarkForest extends RPGMenu implements RPGAction {
         isExitFromMenu = false;
         gameOver = false;
         while (!isExitFromMenu && !gameOver) {
-            switch (Utils.getMenuItem(text, countOfMenuItems)) {
+            switch (getMenuItem(text, countOfMenuItems)) {
                 case 1 -> System.out.println(monster);
                 case 2 -> {
                     gameOver = startBattle(hero, monster);

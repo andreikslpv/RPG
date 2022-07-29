@@ -1,8 +1,8 @@
 package Things.Weapons;
 
-import Things.Thing;
+import Things.RPGThing;
 
-public abstract class Weapon extends Thing {
+public abstract class Weapon extends RPGThing {
     protected int powerEffect;
     protected int dexterityEffect;
 

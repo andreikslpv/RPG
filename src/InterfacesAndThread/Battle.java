@@ -1,5 +1,6 @@
 package InterfacesAndThread;
 
+import Characters.Humans.Human;
 import Characters.RPGCharacter;
 import Things.Potions.PotionBig;
 import Things.Potions.PotionMedium;
@@ -12,24 +13,29 @@ public record Battle(RPGCharacter warrior1, RPGCharacter warrior2) implements Ru
     private void kick(RPGCharacter batter, RPGCharacter battered) {
         double chance = batter.getChance();
         int kickPower = 0, damage; // в случае промаха (chance < 0.2)
+        String typeOfKick = " (промах)";
         // критический удар
-        if (chance > 0.8d)
+        if (chance > 0.8d) {
             kickPower = batter.getPower() * 2;
+            typeOfKick = " (критическуий удар)";
+        }
         // обычный удар
-        if (chance >= 0.2d && chance <= 0.8d)
+        if (chance >= 0.2d && chance <= 0.8d) {
             kickPower = batter.getPower();
+            typeOfKick = "";
+        }
         System.out.println(Utils.INDENT_3_LEVEL + batter.getName() + " (" + batter.getCurrentHealth() + " hp) наносит "
                 + battered.getName() + " (" + battered.getCurrentHealth() + " hp) "
-                + kickPower + " повреждений");
+                + kickPower + " повреждений" + typeOfKick);
         battered.changeCurrentHealth(-kickPower);
-        if (battered instanceof HaveBackpack && battered.getCurrentHealth() > 0) {
+        if (battered instanceof Human && battered.getCurrentHealth() > 0) {
             damage = battered.getMaxHealth() - battered.getCurrentHealth();
             if (damage >= 20)
-                damage = ((HaveBackpack) battered).drinkPotion(new PotionBig());
+                damage = ((Human) battered).drinkPotion(new PotionBig());
             if (damage >= 10)
-                damage = ((HaveBackpack) battered).drinkPotion(new PotionMedium());
+                damage = ((Human) battered).drinkPotion(new PotionMedium());
             if (damage > 0)
-                ((HaveBackpack) battered).drinkPotion(new PotionSmall());
+                ((Human) battered).drinkPotion(new PotionSmall());
         }
     }
 

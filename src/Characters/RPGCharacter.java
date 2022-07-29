@@ -36,6 +36,13 @@ abstract public class RPGCharacter implements Serializable, Utils {
             return power;
     }
 
+    public int getDexterity() {
+        if (weapon != null)
+            return dexterity + weapon.getDexterityEffect();
+        else
+            return dexterity;
+    }
+
     public int getLevel() {
         return level;
     }
@@ -48,7 +55,7 @@ abstract public class RPGCharacter implements Serializable, Utils {
         if (weapon != null)
             return (dexterity + weapon.getDexterityEffect()) / 200d + Math.random();
         else
-            return dexterity;
+            return dexterity / 200d + Math.random();
     }
 
     public void changeCurrentHealth(int change) {
@@ -93,21 +100,22 @@ abstract public class RPGCharacter implements Serializable, Utils {
         return this.weapon;
     }
 
-    public StringBuilder getSummaryLine1() {
+    public StringBuilder getInfoPart1() {
         return new StringBuilder("\n" + INDENT_2_LEVEL + name + ":\n" + INDENT_2_LEVEL + "Уровень: " + level);
     }
 
-    public StringBuilder getSummaryLine2() {
-        StringBuilder sb = new StringBuilder("\n" + INDENT_2_LEVEL + "Здоровье: " + currentHealth + "/" + maxHealth + ", сила: " + power + ", ловкость: " + dexterity
+    public StringBuilder getInfoPart2() {
+        StringBuilder sb = new StringBuilder("\n" + INDENT_2_LEVEL + "Здоровье: " + currentHealth + '/' + maxHealth
+                + ", сила: " + getPower() + '/' + power + ", ловкость: " + getDexterity() + '/' +  dexterity
                 + "\n" + INDENT_2_LEVEL + "Золото: " + gold);
         if (weapon != null)
-            return sb.append("\nОружие в руках: ").append(weapon.getName());
+            return sb.append("\n").append(INDENT_2_LEVEL).append("Оружие в руках: ").append(weapon.getName());
         else
             return sb;
     }
 
     @Override
     public String toString() {
-        return getSummaryLine1().append(getSummaryLine2()).toString();
+        return getInfoPart1().append(getInfoPart2()).toString();
     }
 }

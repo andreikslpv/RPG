@@ -1,13 +1,13 @@
 package Characters.Moncters;
 
-import Things.Weapons.WeaponCudgel;
+import Things.Weapons.Cudgel;
 
 public class Goblin extends Monster {
     public Goblin(int globalLevel) {
         super(globalLevel);
         name = "GOBLIN";
-        if (Math.random() > 0.9)
-            weapon = new WeaponCudgel();
+        if (Math.random() > 0.8)
+            weapon = new Cudgel();
     }
 
     @Override

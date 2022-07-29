@@ -1,13 +1,13 @@
 package Characters.Moncters;
 
-import Things.Weapons.WeaponTanto;
+import Things.Weapons.Tanto;
 
 public class Skeleton extends Monster {
     public Skeleton(int globalLevel) {
         super(globalLevel);
         name = "SKELETON";
-        if (Math.random() > 0.95)
-            weapon = new WeaponTanto();
+        if (Math.random() > 0.9)
+            weapon = new Tanto();
     }
 
     @Override

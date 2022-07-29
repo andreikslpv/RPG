@@ -1,8 +1,8 @@
 package Characters.Humans;
 
 import InterfacesAndThread.Utils;
-import Things.Weapons.WeaponKatana;
-import Things.Weapons.WeaponTanto;
+import Things.Weapons.Katana;
+import Things.Weapons.Tanto;
 
 public class Smith extends Trader {
     public Smith(String name, int globalLevel) {
@@ -14,7 +14,7 @@ public class Smith extends Trader {
         super.setLevel(newLevel);
         power = level * 6 + 10;
         dexterity = level * 6 + 10;
-        putItInBackpack(new WeaponTanto(), Utils.getRandom(1));
-        putItInBackpack(new WeaponKatana(), Utils.getRandom(1));
+        putItInBackpack(new Tanto(), Utils.getRandom(1));
+        putItInBackpack(new Katana(), Utils.getRandom(1));
     }
 }
