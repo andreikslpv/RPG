@@ -35,8 +35,10 @@ public class MenuDarkForest extends RPGMenu implements RPGAction {
                 case 2 -> {
                     gameOver = startBattle(hero, monster);
                     if (!gameOver) {
+                        // Если выжили после битвы спрашиваем остаться или вернуться в город через специальное меню
                         MenuOfContinue menuOfContinue = new MenuOfContinue(indentLevel + 1, "Темном лесу");
                         menuOfContinue.printMenu();
+                        // Если решили остаться меняем монстра
                         if (!(isExitFromMenu = menuOfContinue.isLeaveLocation()))
                             refreshMonster(monster.getName());
                     }

@@ -26,6 +26,7 @@ public class MenuTown extends RPGMenu {
         hero = new Hero(nameOfTheHero, 1);
         globalLevel = hero.getLevel();
         traders = new ArrayList<>();
+        // Количество торговцев может быть любое
         traders.add(new Alchemist("ALCHEMIST", globalLevel));
         traders.add(new Smith("SMITH", globalLevel));
         menuItems.add(new StringBuilder("Вы находитесь в Городе. Что вы хотите сделать?"));
@@ -53,6 +54,7 @@ public class MenuTown extends RPGMenu {
             switch (enter = getMenuItem(text, countOfMenuItems)) {
                 case 1 -> System.out.println(hero);
                 case 2 -> {
+                    // Просмотр рюкзака героя и выбор вещи для применения (выпить зелье, одеть/снять оружие)
                     MenuOfChoosingThing menu = new MenuOfChoosingThing(hero, indentLevel + 1, "использования:");
                     menu.printMenu();
                     RPGThing thing = menu.getChoosingThing();
@@ -65,6 +67,7 @@ public class MenuTown extends RPGMenu {
                             hero.takeTheSword((Weapon) thing);
                 }
                 case 3 -> {
+                    // Формируем локацию Темный лес и переходим в её меню
                     MenuDarkForest menuDarkForest = new MenuDarkForest(hero, indentLevel + 1);
                     menuDarkForest.printMenu();
                     if (menuDarkForest.isGameOver())
@@ -74,8 +77,10 @@ public class MenuTown extends RPGMenu {
                 }
                 case 0 -> isExitFromMenu = true;
             }
+            // Сохраняем игру в файл
             if (enter == countOfMenuItems)
                 saveGameToTheFile();
+            // Определяем выбранного торговца и формируем локаци торговли с ним
             enter -= 4;
             if (enter >= 0 && enter < traders.size()) {
                 if (traders.get(enter).getCurrentHealth() > 0) {

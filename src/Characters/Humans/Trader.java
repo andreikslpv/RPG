@@ -12,7 +12,8 @@ public abstract class Trader extends Human {
     public void setLevel(int newLevel) {
         if (newLevel >= 1) {
             this.level = newLevel;
-            currentHealth = maxHealth = level * 5 + 20;
+            // При левелапе происходит воскрещение торговцев, увеличения у них золота и обновления ассортимента товаров
+            currentHealth = maxHealth = level * 5 + 40;
             gold = Utils.getRandom(100) + (level * 10);
         }
     }

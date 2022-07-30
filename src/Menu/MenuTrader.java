@@ -32,12 +32,15 @@ public class MenuTrader extends RPGMenu implements RPGAction {
         while (!isExitFromMenu) {
             switch (getMenuItem(text, countOfMenuItems)) {
                 case 1 -> System.out.println(trader);
+                // Формируем и запускаем меню покупки вещей у торговца
                 case 2 -> switchBuyOrSell(trader, hero, "покупки:");
                 case 3 -> {
+                    // Формируем и запускаем меню кражи
                     MenuOfChoosingThing menuThing = new MenuOfChoosingThing(trader, indentLevel + 1, "кражи:");
                     menuThing.printMenu();
                     if (menuThing.getChoosingThing() != null) {
                         double chance = hero.getChance();
+                        // Если повезло то воруем, нет - деремся с торговцем
                         if (chance > 0.8d)
                             startTheft(trader, hero, menuThing.getChoosingThing());
                         else {
@@ -47,6 +50,7 @@ public class MenuTrader extends RPGMenu implements RPGAction {
                         }
                     }
                 }
+                // Формируем и запускаем меню продажи вещей торговцу
                 case 4 -> switchBuyOrSell(hero, trader, "продажи:");
                 case 0 -> isExitFromMenu = true;
             }
@@ -58,10 +62,12 @@ public class MenuTrader extends RPGMenu implements RPGAction {
     }
 
     private void switchBuyOrSell(Human trader, Human buyer, String purpose) {
+        // Сначала выбираем товар, с помощью соответствующего меню
         MenuOfChoosingThing menuThing = new MenuOfChoosingThing(trader, indentLevel + 1, purpose);
         menuThing.printMenu();
         RPGThing choosingThing = menuThing.getChoosingThing();
         if (choosingThing != null)
+            // Если покупатель берет такой тип товара, формируем и запускаем меню выбора количества товаров для покупки/продажи
             if (doesHeBuyThisThing(buyer, choosingThing)) {
                 MenuOfChoosingCount menuCount = new MenuOfChoosingCount(trader, choosingThing, indentLevel + 1, purpose);
                 menuCount.printMenu();
@@ -71,10 +77,13 @@ public class MenuTrader extends RPGMenu implements RPGAction {
     }
 
     private boolean doesHeBuyThisThing(Human buyer, RPGThing thing) {
+        // Герой покупает все
         if (buyer instanceof Hero)
             return true;
+        // Алхимик только зелья
         if (buyer instanceof Alchemist && thing instanceof Potion)
             return true;
+        // Кузнец только оружие
         if (buyer instanceof Smith && thing instanceof Weapon)
             return true;
         return false;

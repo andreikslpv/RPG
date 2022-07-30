@@ -24,6 +24,7 @@ public class MenuMain extends RPGMenu{
             game = null;
             switch (getMenuItem(text, countOfMenuItems)) {
                 case 1:
+                    // Спрашиваем имя героя и формируем новый "мир"
                     System.out.println("Введите имя Вашего Героя");
                     Scanner scanner = new Scanner(System.in);
                     if (scanner.hasNext()) {
@@ -31,6 +32,7 @@ public class MenuMain extends RPGMenu{
                     }
                     break;
                 case 2:
+                    // Пробуем загрузить "мир" из файла с диска
                     try (FileInputStream fis = new FileInputStream("RPG.save");
                          ObjectInputStream ois = new ObjectInputStream(fis)) {
                         game = (MenuTown) ois.readObject();
@@ -43,6 +45,7 @@ public class MenuMain extends RPGMenu{
                 default:
                     System.exit(0);
             }
+            // Запускаем игру
             if (game != null) {
                 game.printMenu();
             }

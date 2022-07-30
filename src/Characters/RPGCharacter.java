@@ -52,10 +52,8 @@ abstract public class RPGCharacter implements Serializable, Utils {
     }
 
     public double getChance() {
-        if (weapon != null)
-            return (dexterity + weapon.getDexterityEffect()) / 200d + Math.random();
-        else
-            return dexterity / 200d + Math.random();
+        // возвращает интегральный параметр, используемый при определении удачности кражи, промаха и критического удара
+        return getDexterity() / 200d + Math.random() / 2d;
     }
 
     public void changeCurrentHealth(int change) {
@@ -89,7 +87,7 @@ abstract public class RPGCharacter implements Serializable, Utils {
     }
 
     public boolean isWeaponTaken(Weapon weapon) {
-        return this.weapon == weapon;
+        return weapon.equals(this.weapon);
     }
 
     public boolean isWeaponTaken() {
@@ -106,7 +104,7 @@ abstract public class RPGCharacter implements Serializable, Utils {
 
     public StringBuilder getInfoPart2() {
         StringBuilder sb = new StringBuilder("\n" + INDENT_2_LEVEL + "Здоровье: " + currentHealth + '/' + maxHealth
-                + ", сила: " + getPower() + '/' + power + ", ловкость: " + getDexterity() + '/' +  dexterity
+                + ", сила: " + getPower() + '/' + power + ", ловкость: " + getDexterity() + '/' + dexterity
                 + "\n" + INDENT_2_LEVEL + "Золото: " + gold);
         if (weapon != null)
             return sb.append("\n").append(INDENT_2_LEVEL).append("Оружие в руках: ").append(weapon.getName());

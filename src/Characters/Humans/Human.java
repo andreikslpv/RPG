@@ -60,6 +60,7 @@ abstract public class Human extends RPGCharacter {
                         return true;
                     }
                     if (temp == count) {
+                        // если из рюкзака убирается последнее оружие такого типа, то снимаем его с персонажа
                         if (iterator instanceof Weapon)
                             this.removeTheSword((Weapon) iterator);
                         iterator.remove();

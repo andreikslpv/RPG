@@ -7,7 +7,6 @@ import Things.RPGThing;
 
 public interface RPGAction {
 
-    // Возвращает true если герой умер и игра закончена
     default boolean startBattle(Hero hero, RPGCharacter nasty) {
         Thread battle = new Thread(new Battle(hero, nasty));
         battle.start();
@@ -20,6 +19,8 @@ public interface RPGAction {
         if (nasty.getCurrentHealth() <= 0) {
             hero.takeWin(nasty);
         }
+        // Возвращает true если герой умер и игра закончена.
+        // Вызывающий метод использует возвращаемое значение для выхода из всех меню вплоть до стартового меню
         if (hero.getCurrentHealth() <= 0) {
             System.out.println(Utils.INDENT_3_LEVEL + nasty.getName() + " победил Вашего героя. Игра окончена!");
             return true;
@@ -34,6 +35,7 @@ public interface RPGAction {
                 trader.removeItFromBackpack(thing, countForSales);
                 trader.changeGold(sum);
                 buyer.putItInBackpack(thing, countForSales);
+                // Только герой получает опыт, в т.ч. за торговлю
                 if (buyer instanceof Hero)
                     ((Hero) buyer).changeExperience(sum / 10);
                 System.out.println(Utils.INDENT_3_LEVEL + buyer.getName() + " успешно купил " + thing.getName() + " (" + countForSales + " шт.)");
@@ -49,6 +51,7 @@ public interface RPGAction {
             int count = robbed.getCountOfThing(thing);
             robbed.removeItFromBackpack(thing, count);
             thief.putItInBackpack(thing, count);
+            // Только герой получает опыт, в т.ч. за кражи
             if (thief instanceof Hero)
                 ((Hero) thief).changeExperience(thing.getPrice() * count / 10);
             System.out.println(Utils.INDENT_3_LEVEL + "Вы успешно украли " + thing.getName() + " (" + count + " шт.)");

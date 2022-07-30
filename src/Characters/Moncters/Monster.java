@@ -14,6 +14,7 @@ abstract public class Monster extends RPGCharacter {
     public void setLevel(int newLevel) {
         if (newLevel >= 1) {
             this.level = newLevel;
+            // Левел монстра может быть +- 2 от уровня героя
             if (newLevel > 2)
                 this.level = newLevel + Utils.getRandom(4) - 2;
             currentHealth = maxHealth = level * 5 + 20;
